@@ -12,8 +12,9 @@ application:
             runtime: nodejs:18
             inputs:
               LOG_LEVEL: debug
+              __AIO_MTLS_CERT: $__AIO_MTLS_CERT
+              __AIO_MTLS_KEY: $__AIO_MTLS_KEY
             annotations:
-              require-adobe-auth: true
               final: true
           fetchList:
             function: actions/fetchList/index.js
@@ -22,6 +23,6 @@ application:
             inputs:
               LOG_LEVEL: debug
               apiKey: $SERVICE_API_KEY
+              AUTH_HEADER: $AUTH_HEADER
             annotations:
-              require-adobe-auth: true
               final: true
