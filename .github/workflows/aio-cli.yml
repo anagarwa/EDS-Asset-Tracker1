@@ -27,23 +27,6 @@ jobs:
     - name: Install Dependencies
       run: npm install
 
-    - name: Install yq for YAML Parsing
-      run: |
-        # Download and install yq
-        curl -sLo /usr/local/bin/yq https://github.com/mikefarah/yq/releases/download/v4.23.1/yq_linux_amd64
-        chmod +x /usr/local/bin/yq
-
-    - name: Read YAML and Create Action List
-      id: generate_action_list
-      run: |
-        yaml_file="app.config.yaml"
-        actions=$(yq eval '.application.runtimeManifest.packages."EDS-Asset-Tracker1".actions | to_entries | map("\(.key): \(.value.function)") | join(", ")' $yaml_file)
-        echo "actions=$actions" >> $GITHUB_ENV
-
-    - name: Echo Action List
-      run: |
-        echo "Action List: ${{ env.actions }}"
-
     - name: Configure AIO-CLI Runtime Properties
       env:
         AIO_RUNTIME_AUTH: ${{ secrets.AIO_RUNTIME_AUTH }}
@@ -54,3 +37,4 @@ jobs:
         echo "AIO_RUNTIME_NAMESPACE: $AIO_RUNTIME_NAMESPACE"
         echo "AIO_RUNTIME_APIHOST: $AIO_RUNTIME_APIHOST"
         aio rt property get --all # Replace with your desired AIO-CLI command
+        aio app deploy
