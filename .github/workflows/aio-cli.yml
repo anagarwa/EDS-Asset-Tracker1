@@ -1,0 +1,36 @@
+name: Run Adobe AIO-CLI Command
+
+on:
+  workflow_dispatch:
+
+jobs:
+  run-aio-cli:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Set Node.js 16 as Unsecure Version
+      env:
+        ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION: true
+      run: echo "Node.js 18 will be used"
+
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Install Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20'
+
+    - name: Install Adobe AIO-CLI
+      run: npm install -g @adobe/aio-cli
+
+    - name: Configure AIO-CLI Runtime Properties
+      env:
+        AIO_RUNTIME_AUTH: ${{ secrets.AIO_RUNTIME_AUTH }}
+        AIO_RUNTIME_NAMESPACE: ${{ secrets.AIO_RUNTIME_NAMESPACE }}
+        AIO_RUNTIME_APIHOST: ${{ secrets.AIO_RUNTIME_APIHOST || 'https://adobeioruntime.net' }}
+      run: |
+        echo "AIO_RUNTIME_AUTH: $AIO_RUNTIME_AUTH"
+        echo "AIO_RUNTIME_NAMESPACE: $AIO_RUNTIME_NAMESPACE"
+        echo "AIO_RUNTIME_APIHOST: $AIO_RUNTIME_APIHOST"
+        aio rt property get --all # Replace with your desired AIO-CLI command
