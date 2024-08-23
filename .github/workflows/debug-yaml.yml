@@ -38,7 +38,7 @@ jobs:
         # Display the version of yq for debugging
         yq --version
         # Extract and debug the YAML parsing command
-        yq eval '.application.runtimeManifest.packages."EDS-Asset-Tracker1".actions | to_entries | map("\(.key): \(.value.function)") | join(", ")' $yaml_file > actions.txt
+        yq eval '.application.runtimeManifest.packages."EDS-Asset-Tracker1".actions | to_entries | map("\(.key): \(.value.function)") | join(", ")' $yaml_file > actions.txt || exit 1
         cat actions.txt
         actions=$(cat actions.txt)
         echo "actions=$actions" >> $GITHUB_ENV
