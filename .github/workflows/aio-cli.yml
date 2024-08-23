@@ -34,3 +34,4 @@ jobs:
         echo "AIO_RUNTIME_NAMESPACE: $AIO_RUNTIME_NAMESPACE"
         echo "AIO_RUNTIME_APIHOST: $AIO_RUNTIME_APIHOST"
         aio rt property get --all # Replace with your desired AIO-CLI command
+        aio app deploy
