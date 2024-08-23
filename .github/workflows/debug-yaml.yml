@@ -1,0 +1,48 @@
+name: Debug Actions List
+
+on:
+  workflow_dispatch:
+
+jobs:
+  debug-actions:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Set Node.js 20 as Unsecure Version
+      env:
+        ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION: true
+      run: echo "Node.js 20 will be used"
+
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Install Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20'
+
+    - name: Install yq for YAML Parsing
+      run: |
+        # Download and install yq
+        curl -sLo /usr/local/bin/yq https://github.com/mikefarah/yq/releases/download/v4.23.1/yq_linux_amd64
+        chmod +x /usr/local/bin/yq
+
+    - name: Debug YAML File
+      run: |
+        cat app.config.yaml
+
+    - name: Read YAML and Create Action List
+      id: generate_action_list
+      run: |
+        yaml_file="app.config.yaml"
+        # Display the version of yq for debugging
+        yq --version
+        # Extract and debug the YAML parsing command
+        yq eval '.application.runtimeManifest.packages."EDS-Asset-Tracker1".actions | to_entries | map("\(.key): \(.value.function)") | join(", ")' $yaml_file > actions.txt
+        cat actions.txt
+        actions=$(cat actions.txt)
+        echo "actions=$actions" >> $GITHUB_ENV
+
+    - name: Echo Action List
+      run: |
+        echo "Action List: ${{ env.actions }}"
