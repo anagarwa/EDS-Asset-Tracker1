@@ -1,10 +1,10 @@
-name: Debug Actions List
+name: Extract First Package Name
 
 on:
   workflow_dispatch:
 
 jobs:
-  debug-actions:
+  extract-package-name:
     runs-on: ubuntu-latest
 
     steps:
@@ -27,22 +27,17 @@ jobs:
         curl -sLo /usr/local/bin/yq https://github.com/mikefarah/yq/releases/download/v4.23.1/yq_linux_amd64
         chmod +x /usr/local/bin/yq
 
-    - name: Debug YAML File
-      run: |
-        cat app.config.yaml
-
-    - name: Read YAML and Create Action List
-      id: generate_action_list
+    - name: Extract First Package Name
+      id: extract_package_name
       run: |
         yaml_file="app.config.yaml"
         # Display the version of yq for debugging
         yq --version
         # Extract and debug the YAML parsing command
-        yq eval '.application.runtimeManifest.packages."EDS-Asset-Tracker1".actions | to_entries | map("\(.key): \(.value.function)") | join(", ")' $yaml_file > actions.txt || exit 1
-        cat actions.txt
-        actions=$(cat actions.txt)
-        echo "actions=$actions" >> $GITHUB_ENV
+        first_package_name=$(yq eval '.application.runtimeManifest.packages | keys | .[0]' $yaml_file)
+        echo "First Package Name: $first_package_name"
+        echo "FIRST_PACKAGE_NAME=$first_package_name" >> $GITHUB_ENV
 
-    - name: Echo Action List
+    - name: Echo First Package Name
       run: |
-        echo "Action List: ${{ env.actions }}"
+        echo "First Package Name: ${{ env.FIRST_PACKAGE_NAME }}"
