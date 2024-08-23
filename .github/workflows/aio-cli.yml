@@ -24,6 +24,9 @@ jobs:
     - name: Install Adobe AIO-CLI
       run: npm install -g @adobe/aio-cli
 
+    - name: Install Dependencies
+      run: npm install
+
     - name: Configure AIO-CLI Runtime Properties
       env:
         AIO_RUNTIME_AUTH: ${{ secrets.AIO_RUNTIME_AUTH }}
